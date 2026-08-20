@@ -44,6 +44,7 @@ const toast = document.getElementById('toast');
 
 let pendingCoords = null;
 let toastTimer = null;
+let pickingOnMap = false;
 
 function showToast(msg) {
   toast.textContent = msg;
@@ -57,10 +58,10 @@ function openModal() {
   pendingCoords = null;
   nameInput.value = '';
   confirmBtn.disabled = true;
-  statusEl.textContent = 'Getting your location…';
+  statusEl.innerHTML = 'Getting your location…';
 
   if (!navigator.geolocation) {
-    statusEl.textContent = 'Geolocation is not supported by your browser.';
+    offerMapPicker('Geolocation is not supported by your browser.');
     return;
   }
 
@@ -72,14 +73,51 @@ function openModal() {
       nameInput.focus();
     },
     (err) => {
-      statusEl.textContent = `Couldn't get your location (${err.message}). Please allow location access and try again.`;
+      offerMapPicker(`Couldn't get your location (${err.message}).`);
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
+function offerMapPicker(reason) {
+  statusEl.innerHTML = '';
+  const p = document.createElement('span');
+  p.textContent = `${reason} `;
+  const link = document.createElement('a');
+  link.href = '#';
+  link.textContent = 'Click here, then tap a spot on the map instead.';
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    startMapPicking();
+  });
+  statusEl.appendChild(p);
+  statusEl.appendChild(link);
+}
+
+function startMapPicking() {
+  pickingOnMap = true;
+  overlay.classList.add('hidden');
+  showToast('Tap anywhere on the map to place your pin');
+  map.getContainer().style.cursor = 'crosshair';
+}
+
+map.on('click', (e) => {
+  if (!pickingOnMap) return;
+  pickingOnMap = false;
+  map.getContainer().style.cursor = '';
+  pendingCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
+  overlay.classList.remove('hidden');
+  statusEl.textContent = `Location set (${pendingCoords.lat.toFixed(3)}, ${pendingCoords.lng.toFixed(3)}). Enter your name below.`;
+  updateConfirmState();
+  nameInput.focus();
+});
+
 function closeModal() {
   overlay.classList.add('hidden');
+  if (pickingOnMap) {
+    pickingOnMap = false;
+    map.getContainer().style.cursor = '';
+  }
 }
 
 function updateConfirmState() {

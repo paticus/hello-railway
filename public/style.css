@@ -90,6 +90,11 @@ header h1 {
   color: #666;
 }
 
+#modal-status a {
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+
 #modal label {
   display: block;
   font-size: 0.8rem;
