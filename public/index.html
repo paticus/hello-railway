@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pin Map — Where are you visiting from?</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>📍 Where are you from?</h1>
+    <button id="drop-pin-btn">Drop a Pin</button>
+  </header>
+
+  <div id="map"></div>
+
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <h2>Drop your pin</h2>
+      <p id="modal-status">Getting your location…</p>
+      <label for="name-input">Your name</label>
+      <input id="name-input" type="text" maxlength="60" placeholder="e.g. Alex from Seattle" autocomplete="off">
+      <div class="modal-actions">
+        <button id="cancel-btn" class="secondary">Cancel</button>
+        <button id="confirm-btn" disabled>Drop Pin</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
